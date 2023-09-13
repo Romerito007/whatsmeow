@@ -176,8 +176,9 @@ func (cfr ConnectFailureReason) String() string {
 //
 // Known reasons are handled internally and emitted as different events (e.g. LoggedOut and TemporaryBan).
 type ConnectFailure struct {
-	Reason ConnectFailureReason
-	Raw    *waBinary.Node
+	Reason  ConnectFailureReason
+	Message string
+	Raw     *waBinary.Node
 }
 
 // ClientOutdated is emitted when the WhatsApp server rejects the connection with the ConnectFailureClientOutdated code.
@@ -232,6 +233,13 @@ type Message struct {
 	IsViewOnceV2          bool // True if the message was unwrapped from a ViewOnceMessage
 	IsDocumentWithCaption bool // True if the message was unwrapped from a DocumentWithCaptionMessage
 	IsEdit                bool // True if the message was unwrapped from an EditedMessage
+
+	// If this event was parsed from a WebMessageInfo (i.e. from a history sync or unavailable message request), the source data is here.
+	SourceWebMsg *waProto.WebMessageInfo
+	// If this event is a response to an unavailable message request, the request ID is here.
+	UnavailableRequestID types.MessageID
+	// If the message was re-requested from the sender, this is the number of retries it took.
+	RetryCount int
 
 	// The raw message struct. This is the raw unmodified data, which means the actual message might
 	// be wrapped in DeviceSentMessage, EphemeralMessage or ViewOnceMessage.
@@ -451,4 +459,33 @@ type MediaRetry struct {
 	ChatID    types.JID       // The chat ID where the message was sent.
 	SenderID  types.JID       // The user who sent the message. Only present in groups.
 	FromMe    bool            // Whether the message was sent by the current user or someone else.
+}
+
+type BlocklistAction string
+
+const (
+	BlocklistActionDefault BlocklistAction = ""
+	BlocklistActionModify  BlocklistAction = "modify"
+)
+
+// Blocklist is emitted when the user's blocked user list is changed.
+type Blocklist struct {
+	// Action specifies what happened. If it's empty, there should be a list of changes in the Changes list.
+	// If it's "modify", then the Changes list will be empty and the whole blocklist should be re-requested.
+	Action    BlocklistAction
+	DHash     string
+	PrevDHash string
+	Changes   []BlocklistChange
+}
+
+type BlocklistChangeAction string
+
+const (
+	BlocklistChangeActionBlock   BlocklistChangeAction = "block"
+	BlocklistChangeActionUnblock BlocklistChangeAction = "unblock"
+)
+
+type BlocklistChange struct {
+	JID    types.JID
+	Action BlocklistChangeAction
 }

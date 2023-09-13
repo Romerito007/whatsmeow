@@ -152,7 +152,6 @@ func (cli *Client) handleOwnDevicesNotification(node *waBinary.Node) {
 	for _, child := range node.GetChildren() {
 		jid := child.AttrGetter().JID("jid")
 		if child.Tag == "device" && !jid.IsEmpty() {
-			jid.AD = true
 			newDeviceList = append(newDeviceList, jid)
 		}
 	}
@@ -164,6 +163,28 @@ func (cli *Client) handleOwnDevicesNotification(node *waBinary.Node) {
 		cli.Log.Debugf("Received own device list change notification %s -> %s", oldHash, newHash)
 		cli.userDevicesCache[ownID] = newDeviceList
 	}
+}
+
+func (cli *Client) handleBlocklist(node *waBinary.Node) {
+	ag := node.AttrGetter()
+	evt := events.Blocklist{
+		Action:    events.BlocklistAction(ag.OptionalString("action")),
+		DHash:     ag.String("dhash"),
+		PrevDHash: ag.OptionalString("prev_dhash"),
+	}
+	for _, child := range node.GetChildren() {
+		ag := child.AttrGetter()
+		change := events.BlocklistChange{
+			JID:    ag.JID("jid"),
+			Action: events.BlocklistChangeAction(ag.String("action")),
+		}
+		if !ag.OK() {
+			cli.Log.Warnf("Unexpected data in blocklist event child %v: %v", child.XMLString(), ag.Error())
+			continue
+		}
+		evt.Changes = append(evt.Changes, change)
+	}
+	cli.dispatchEvent(&evt)
 }
 
 func (cli *Client) handleAccountSyncNotification(node *waBinary.Node) {
@@ -178,6 +199,8 @@ func (cli *Client) handleAccountSyncNotification(node *waBinary.Node) {
 				Timestamp: node.AttrGetter().UnixTime("t"),
 				JID:       cli.getOwnID().ToNonAD(),
 			})
+		case "blocklist":
+			cli.handleBlocklist(&child)
 		default:
 			cli.Log.Debugf("Unhandled account sync item %s", child.Tag)
 		}
@@ -259,6 +282,8 @@ func (cli *Client) handleNotification(node *waBinary.Node) {
 		go cli.handleMediaRetryNotification(node)
 	case "privacy_token":
 		go cli.handlePrivacyTokenNotification(node)
+	case "link_code_companion_reg":
+		go cli.tryHandleCodePairNotification(node)
 	// Other types: business, disappearing_mode, server, status, pay, psa
 	default:
 		cli.Log.Debugf("Unhandled notification with type %s", notifType)
