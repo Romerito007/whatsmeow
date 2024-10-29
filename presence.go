@@ -9,9 +9,9 @@ package whatsmeow
 import (
 	"fmt"
 
-	waBinary "go.mau.fi/whatsmeow/binary"
-	"go.mau.fi/whatsmeow/types"
-	"go.mau.fi/whatsmeow/types/events"
+	waBinary "github.com/Romerito007/whatsmeow/binary"
+	"github.com/Romerito007/whatsmeow/types"
+	"github.com/Romerito007/whatsmeow/types/events"
 )
 
 func (cli *Client) handleChatState(node *waBinary.Node) {

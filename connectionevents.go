@@ -9,10 +9,10 @@ package whatsmeow
 import (
 	"time"
 
-	waBinary "go.mau.fi/whatsmeow/binary"
-	"go.mau.fi/whatsmeow/store"
-	"go.mau.fi/whatsmeow/types"
-	"go.mau.fi/whatsmeow/types/events"
+	waBinary "github.com/Romerito007/whatsmeow/binary"
+	"github.com/Romerito007/whatsmeow/store"
+	"github.com/Romerito007/whatsmeow/types"
+	"github.com/Romerito007/whatsmeow/types/events"
 )
 
 func (cli *Client) handleStreamError(node *waBinary.Node) {
