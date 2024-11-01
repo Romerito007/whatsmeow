@@ -812,16 +812,12 @@ func getButtonTypeFromMessage(msg *waE2E.Message) string {
 		return "list_response"
 	case msg.InteractiveResponseMessage != nil:
 		return "interactive_response"
-	case msg.TemplateMessage != nil:
-		return "template_message"
 	default:
 		return ""
 	}
 }
 
 func getButtonAttributes(msg *waE2E.Message) waBinary.Attrs {
-	fmt.Println(msg.TemplateMessage)
-	fmt.Println("DEBUG MESSAGE--------------")
 	switch {
 	case msg.ViewOnceMessage != nil:
 		return getButtonAttributes(msg.ViewOnceMessage.Message)
@@ -830,8 +826,6 @@ func getButtonAttributes(msg *waE2E.Message) waBinary.Attrs {
 	case msg.EphemeralMessage != nil:
 		return getButtonAttributes(msg.EphemeralMessage.Message)
 	case msg.TemplateMessage != nil:
-		fmt.Println(msg.TemplateMessage)
-		fmt.Println("DEBUG PRODUCTION--------------")
 		return waBinary.Attrs{}
 	case msg.ListMessage != nil:
 		return waBinary.Attrs{
