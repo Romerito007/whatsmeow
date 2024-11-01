@@ -10,12 +10,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Romerito007/whatsmeow/proto/waHistorySync"
+	"github.com/Romerito007/whatsmeow/proto/waVnameCert"
 	"strings"
 
 	"google.golang.org/protobuf/proto"
 
 	waBinary "github.com/Romerito007/whatsmeow/binary"
-	waProto "github.com/Romerito007/whatsmeow/binary/proto"
 	"github.com/Romerito007/whatsmeow/types"
 	"github.com/Romerito007/whatsmeow/types/events"
 )
@@ -571,7 +572,7 @@ func (cli *Client) GetProfilePictureInfo(jid types.JID, params *GetProfilePictur
 	return &info, nil
 }
 
-func (cli *Client) handleHistoricalPushNames(names []*waProto.Pushname) {
+func (cli *Client) handleHistoricalPushNames(names []*waHistorySync.Pushname) {
 	if cli.Store.Contacts == nil {
 		return
 	}
@@ -645,12 +646,12 @@ func parseVerifiedNameContent(verifiedNameNode waBinary.Node) (*types.VerifiedNa
 		return nil, nil
 	}
 
-	var cert waProto.VerifiedNameCertificate
+	var cert waVnameCert.VerifiedNameCertificate
 	err := proto.Unmarshal(rawCert, &cert)
 	if err != nil {
 		return nil, err
 	}
-	var certDetails waProto.VerifiedNameCertificate_Details
+	var certDetails waVnameCert.VerifiedNameCertificate_Details
 	err = proto.Unmarshal(cert.GetDetails(), &certDetails)
 	if err != nil {
 		return nil, err

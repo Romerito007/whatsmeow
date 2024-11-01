@@ -12,6 +12,7 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
+	"github.com/Romerito007/whatsmeow/proto/waE2E"
 	"time"
 
 	"go.mau.fi/libsignal/ecc"
@@ -21,7 +22,6 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	waBinary "github.com/Romerito007/whatsmeow/binary"
-	waProto "github.com/Romerito007/whatsmeow/binary/proto"
 	"github.com/Romerito007/whatsmeow/proto/waCommon"
 	"github.com/Romerito007/whatsmeow/proto/waConsumerApplication"
 	"github.com/Romerito007/whatsmeow/proto/waMsgApplication"
@@ -39,7 +39,7 @@ type recentMessageKey struct {
 }
 
 type RecentMessage struct {
-	wa *waProto.Message
+	wa *waE2E.Message
 	fb *waMsgApplication.MessageApplication
 }
 
@@ -47,7 +47,7 @@ func (rm RecentMessage) IsEmpty() bool {
 	return rm.wa == nil && rm.fb == nil
 }
 
-func (cli *Client) addRecentMessage(to types.JID, id types.MessageID, wa *waProto.Message, fb *waMsgApplication.MessageApplication) {
+func (cli *Client) addRecentMessage(to types.JID, id types.MessageID, wa *waE2E.Message, fb *waMsgApplication.MessageApplication) {
 	cli.recentMessagesLock.Lock()
 	key := recentMessageKey{to, id}
 	if cli.recentMessagesList[cli.recentMessagesPtr].ID != "" {
@@ -162,7 +162,7 @@ func (cli *Client) handleRetryReceipt(receipt *events.Receipt, node *waBinary.No
 			cli.Log.Warnf("Failed to create sender key distribution message to include in retry of %s in %s to %s: %v", messageID, receipt.Chat, receipt.Sender, err)
 		}
 		if msg.wa != nil {
-			msg.wa.SenderKeyDistributionMessage = &waProto.SenderKeyDistributionMessage{
+			msg.wa.SenderKeyDistributionMessage = &waE2E.SenderKeyDistributionMessage{
 				GroupID:                             proto.String(receipt.Chat.String()),
 				AxolotlSenderKeyDistributionMessage: signalSKDMessage.Serialize(),
 			}
@@ -174,8 +174,8 @@ func (cli *Client) handleRetryReceipt(receipt *events.Receipt, node *waBinary.No
 		}
 	} else if receipt.IsFromMe {
 		if msg.wa != nil {
-			msg.wa = &waProto.Message{
-				DeviceSentMessage: &waProto.DeviceSentMessage{
+			msg.wa = &waE2E.Message{
+				DeviceSentMessage: &waE2E.DeviceSentMessage{
 					DestinationJID: proto.String(receipt.Chat.String()),
 					Message:        msg.wa,
 				},

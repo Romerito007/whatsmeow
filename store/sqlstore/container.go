@@ -10,12 +10,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/Romerito007/whatsmeow/proto/waAdv"
 	mathRand "math/rand"
 
 	"github.com/google/uuid"
 	"go.mau.fi/util/random"
 
-	waProto "github.com/Romerito007/whatsmeow/binary/proto"
 	"github.com/Romerito007/whatsmeow/store"
 	"github.com/Romerito007/whatsmeow/types"
 	"github.com/Romerito007/whatsmeow/util/keys"
@@ -104,7 +104,7 @@ func (c *Container) scanDevice(row scannable) (*store.Device, error) {
 	device.Log = c.log
 	device.SignedPreKey = &keys.PreKey{}
 	var noisePriv, identityPriv, preKeyPriv, preKeySig []byte
-	var account waProto.ADVSignedDeviceIdentity
+	var account waAdv.ADVSignedDeviceIdentity
 	var fbUUID uuid.NullUUID
 
 	err := row.Scan(

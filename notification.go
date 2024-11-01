@@ -9,12 +9,12 @@ package whatsmeow
 import (
 	"encoding/json"
 	"errors"
+	"github.com/Romerito007/whatsmeow/proto/waE2E"
 
 	"google.golang.org/protobuf/proto"
 
 	"github.com/Romerito007/whatsmeow/appstate"
 	waBinary "github.com/Romerito007/whatsmeow/binary"
-	waProto "github.com/Romerito007/whatsmeow/binary/proto"
 	"github.com/Romerito007/whatsmeow/store"
 	"github.com/Romerito007/whatsmeow/types"
 	"github.com/Romerito007/whatsmeow/types/events"
@@ -282,7 +282,7 @@ func (cli *Client) parseNewsletterMessages(node *waBinary.Node) []*types.Newslet
 			case "plaintext":
 				byteContent, ok := subchild.Content.([]byte)
 				if ok {
-					msg.Message = new(waProto.Message)
+					msg.Message = new(waE2E.Message)
 					err := proto.Unmarshal(byteContent, msg.Message)
 					if err != nil {
 						cli.Log.Warnf("Failed to unmarshal newsletter message: %v", err)

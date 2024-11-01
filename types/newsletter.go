@@ -10,10 +10,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/Romerito007/whatsmeow/proto/waE2E"
 
 	"go.mau.fi/util/jsontime"
-
-	waProto "github.com/Romerito007/whatsmeow/binary/proto"
 )
 
 type NewsletterVerificationState string
@@ -152,7 +151,7 @@ type NewsletterMessage struct {
 	ReactionCounts  map[string]int
 
 	// This is only present when fetching messages, not in live updates
-	Message *waProto.Message
+	Message *waE2E.Message
 }
 
 type GraphQLErrorExtensions struct {

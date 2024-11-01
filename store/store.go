@@ -9,11 +9,11 @@ package store
 
 import (
 	"fmt"
+	"github.com/Romerito007/whatsmeow/proto/waAdv"
 	"time"
 
 	"github.com/google/uuid"
 
-	waProto "github.com/Romerito007/whatsmeow/binary/proto"
 	"github.com/Romerito007/whatsmeow/types"
 	"github.com/Romerito007/whatsmeow/util/keys"
 	waLog "github.com/Romerito007/whatsmeow/util/log"
@@ -136,7 +136,7 @@ type Device struct {
 	AdvSecretKey   []byte
 
 	ID           *types.JID
-	Account      *waProto.ADVSignedDeviceIdentity
+	Account      *waAdv.ADVSignedDeviceIdentity
 	Platform     string
 	BusinessName string
 	PushName     string
