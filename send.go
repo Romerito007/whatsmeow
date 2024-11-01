@@ -818,6 +818,8 @@ func getButtonTypeFromMessage(msg *waE2E.Message) string {
 }
 
 func getButtonAttributes(msg *waE2E.Message) waBinary.Attrs {
+	fmt.Println(msg.TemplateMessage)
+	fmt.Println("DEBUG MESSAGE--------------")
 	switch {
 	case msg.ViewOnceMessage != nil:
 		return getButtonAttributes(msg.ViewOnceMessage.Message)
