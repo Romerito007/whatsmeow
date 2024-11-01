@@ -832,10 +832,7 @@ func getButtonAttributes(msg *waE2E.Message) waBinary.Attrs {
 	case msg.TemplateMessage != nil:
 		fmt.Println(msg.TemplateMessage)
 		fmt.Println("DEBUG PRODUCTION--------------")
-		return waBinary.Attrs{
-			"v":    "2",
-			"type": strings.ToLower(waE2E.HydratedTemplateButton_HydratedURLButton_WebviewPresentationType_name[int32(*waE2E.HydratedTemplateButton_HydratedURLButton_FULL.Enum())]),
-		}
+		return waBinary.Attrs{}
 	case msg.ListMessage != nil:
 		return waBinary.Attrs{
 			"v":    "2",
