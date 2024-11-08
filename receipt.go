@@ -8,7 +8,6 @@ package whatsmeow
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	waBinary "github.com/Romerito007/whatsmeow/binary"
@@ -98,10 +97,6 @@ func (cli *Client) parseReceipt(node *waBinary.Node) (*events.Receipt, error) {
 }
 
 func (cli *Client) sendAck(node *waBinary.Node) {
-	if id, ok := node.Attrs["id"].(string); ok && (strings.HasPrefix(id, "66") || strings.HasPrefix(id, "67")) {
-		// Não enviar ACK para mensagens com ids 66 ou 67
-		return
-	}
 	attrs := waBinary.Attrs{
 		"class": node.Tag,
 		"id":    node.Attrs["id"],
